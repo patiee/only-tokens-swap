@@ -19,12 +19,14 @@ A React application for swapping tokens across multiple blockchain networks usin
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd 1inch-app
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -32,6 +34,7 @@ npm install
 3. Set up your API key:
    - Create a `.env` file in the root directory
    - Add your 1inch API key:
+
    ```
    VITE_1INCH_API_KEY=your_api_key_here
    ```
@@ -39,6 +42,7 @@ npm install
 ## Development
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -48,11 +52,13 @@ The app will be available at `http://localhost:3000`
 ## Building for Production
 
 Build the app for production:
+
 ```bash
 npm run build
 ```
 
 Preview the production build:
+
 ```bash
 npm run preview
 ```
@@ -70,6 +76,7 @@ npm run preview
 ### Supported Networks
 
 The app supports the following networks:
+
 - Ethereum (Chain ID: 1)
 - Polygon (Chain ID: 137)
 - BNB Smart Chain (Chain ID: 56)
@@ -131,5 +138,6 @@ This is a demo application. For production use, ensure proper security measures,
 ## Support
 
 For issues related to:
+
 - **1inch API**: Contact 1inch support
-- **Application**: Open an issue in this repository 
+- **Application**: Open an issue in this repository
