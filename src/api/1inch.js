@@ -43,23 +43,44 @@ export const getSupportedNetworks = async () => {
 // Get tokens for a specific network
 export const getTokensForNetwork = async (chainId) => {
   try {
-    // For now, return mock data since we're focusing on the swap functionality
-    return [
-      { address: '0x0000000000000000000000000000000000000000', symbol: 'ETH', name: 'Ethereum' },
-      { address: '0xA0b86a33E6441b8c4C8C1C1Ec4f1a4B7f2D6575', symbol: 'USDC', name: 'USD Coin' },
-      { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT', name: 'Tether USD' },
-      { address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', symbol: 'WBTC', name: 'Wrapped Bitcoin' },
-      { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI', name: 'Dai Stablecoin' }
-    ]
+    console.log(`Fetching tokens for chain ID: ${chainId} from ${PROXY_BASE_URL}/tokens/${chainId}`)
+    
+    // Call our local Express proxy server to get tokens
+    const response = await fetch(`${PROXY_BASE_URL}/tokens/${chainId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      mode: 'cors'
+    })
+    
+    console.log(`Response status: ${response.status}`)
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      console.error(`Token fetch failed: ${response.status} - ${errorData.error || response.statusText}`)
+      throw new Error(`Failed to fetch tokens: ${response.status} - ${errorData.error || response.statusText}`)
+    }
+    
+    const data = await response.json()
+    console.log(`Successfully received ${Object.keys(data).length} tokens`);
+    
+    // Convert the tokens object to an array format
+    const tokenArray = Object.values(data).map(token => ({
+      address: token.address,
+      symbol: token.symbol,
+      name: token.name,
+      decimals: token.decimals,
+      logoURI: token.logoURI
+    }));
+    
+    console.log(`Processed ${tokenArray.length} tokens`)
+    return tokenArray
   } catch (error) {
     console.error('Error fetching tokens for network:', error)
-    return [
-      { address: '0x0000000000000000000000000000000000000000', symbol: 'ETH', name: 'Ethereum' },
-      { address: '0xA0b86a33E6441b8c4C8C1C1Ec4f1a4B7f2D6575', symbol: 'USDC', name: 'USD Coin' },
-      { address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT', name: 'Tether USD' },
-      { address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', symbol: 'WBTC', name: 'Wrapped Bitcoin' },
-      { address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', symbol: 'DAI', name: 'Dai Stablecoin' }
-    ]
+    // Return mock data as fallback
+    return []
   }
 }
 

@@ -1,0 +1,121 @@
+/* Token Search and Dropdown Styles */
+.token-select-container {
+  position: relative;
+  width: 100%;
+}
+
+.token-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.token-search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.token-search-input:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.token-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 2px solid #e1e5e9;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.token-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f3f4;
+  transition: background-color 0.2s ease;
+}
+
+.token-option:hover {
+  background-color: #f8f9fa;
+}
+
+.token-option:last-child {
+  border-bottom: none;
+}
+
+.token-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.token-symbol {
+  font-weight: 600;
+  font-size: 14px;
+  color: #212529;
+}
+
+.token-name {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.token-address {
+  font-size: 11px;
+  color: #adb5bd;
+  font-family: 'Courier New', monospace;
+}
+
+/* Scrollbar styling for dropdown */
+.token-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.token-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.token-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.token-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .token-option {
+    padding: 10px 12px;
+  }
+  
+  .token-symbol {
+    font-size: 13px;
+  }
+  
+  .token-name {
+    font-size: 11px;
+  }
+  
+  .token-address {
+    font-size: 10px;
+  }
+} 
