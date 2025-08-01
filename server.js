@@ -1,6 +1,7 @@
-const express = require('express')
-const cors = require('cors')
-const fetch = require('node-fetch')
+import 'dotenv/config'; 
+import express from 'express'
+import cors from 'cors'
+import fetch from 'node-fetch'
 
 const app = express()
 const PORT = 3001
@@ -14,8 +15,10 @@ app.get('/api/quote', async (req, res) => {
   try {
     const { srcChain, destChain, srcTokenAddress, dstTokenAddress, amount, walletAddress } = req.query
     
-    const API_KEY = process.env.VITE_1INCH_API_KEY || 'YOUR_API_KEY_HERE'
+    const API_KEY = process.env.INCH_API_KEY || 'YOUR_API_KEY_HERE'
     const API_BASE_URL = 'https://api.1inch.dev'
+
+    console.log('API_KEY:', API_KEY)
     
     const response = await fetch(
       `${API_BASE_URL}/fusion-plus/v1.0/quote/receive?` +
@@ -55,8 +58,10 @@ app.post('/api/swap', async (req, res) => {
   try {
     const { srcChain, destChain, srcTokenAddress, dstTokenAddress, amount, walletAddress, quoteId } = req.body
     
-    const API_KEY = process.env.VITE_1INCH_API_KEY || 'YOUR_API_KEY_HERE'
+    const API_KEY = process.env.INCH_API_KEY || 'YOUR_API_KEY_HERE'
     const API_BASE_URL = 'https://api.1inch.dev'
+
+    console.log('API_KEY:', API_KEY)
     
     const response = await fetch(`${API_BASE_URL}/fusion-plus/v1.0/swap`, {
       method: 'POST',

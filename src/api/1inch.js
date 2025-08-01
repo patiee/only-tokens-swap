@@ -1,8 +1,12 @@
 // 1inch API integration via local proxy server
 // Note: You'll need to get an API key from https://portal.1inch.dev/
-
+import Web3 from 'web3';
 const PROXY_BASE_URL = 'http://localhost:3001/api'
-const API_KEY = import.meta.env.VITE_1INCH_API_KEY || 'YOUR_API_KEY_HERE' // Replace with your actual API key
+const VITE_PRIVATE_KEY = import.meta.env.VITE_PRIVATE_KEY || '' 
+
+const web3 = new Web3('https://ethereum-rpc.publicnode.com')  
+const walletAddress = web3.eth.accounts.privateKeyToAccount(VITE_PRIVATE_KEY).address  
+
 
 // Common headers for API requests
 const getHeaders = () => ({
@@ -103,7 +107,7 @@ export const executeSwap = async (params) => {
       srcTokenAddress: sourceToken,
       dstTokenAddress: destToken,
       amount: amount,
-      walletAddress: '0x0000000000000000000000000000000000000000'
+      walletAddress: walletAddress
     })
     
     // Execute swap via proxy server
