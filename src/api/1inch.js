@@ -2,7 +2,7 @@
 // Note: You'll need to get an API key from https://portal.1inch.dev/
 
 const API_BASE_URL = 'https://api.1inch.dev'
-const API_KEY = process.env.VITE_1INCH_API_KEY || 'YOUR_API_KEY_HERE' // Replace with your actual API key
+const API_KEY = import.meta.env.VITE_1INCH_API_KEY || 'YOUR_API_KEY_HERE' // Replace with your actual API key
 
 // Common headers for API requests
 const getHeaders = () => ({
@@ -69,25 +69,30 @@ export const getSwapQuote = async (params) => {
   const { fromTokenAddress, toTokenAddress, amount, chainId } = params
   
   try {
+    // Using the correct Fusion Plus API endpoint
     const response = await fetch(
-      `${API_BASE_URL}/swap/v6.0/quote?` +
+      `${API_BASE_URL}/fusion-plus/v1.0/quote/receive?` +
       `fromTokenAddress=${fromTokenAddress}&` +
       `toTokenAddress=${toTokenAddress}&` +
       `amount=${amount}&` +
-      `chainId=${chainId}`,
+      `chainId=${chainId}&` +
+      `walletAddress=0x0000000000000000000000000000000000000000&` + // Demo wallet address
+      `slippage=1`, // 1% slippage
       {
         headers: getHeaders()
       }
     )
     
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(`Quote failed: ${response.status} - ${errorData.message || response.statusText}`)
     }
     
-    return await response.json()
+    const data = await response.json()
+    return data
   } catch (error) {
     console.error('Error getting swap quote:', error)
-    throw new Error('Failed to get swap quote')
+    throw new Error(`Failed to get swap quote: ${error.message}`)
   }
 }
 
@@ -96,8 +101,7 @@ export const executeSwap = async (params) => {
   const { sourceNetwork, destNetwork, sourceToken, destToken, amount } = params
   
   try {
-    // For cross-chain swaps, we need to use the 1inch Fusion API
-    // This is a simplified implementation
+    // Get quote first using Fusion Plus API
     const quote = await getSwapQuote({
       fromTokenAddress: sourceToken,
       toTokenAddress: destToken,
@@ -105,21 +109,39 @@ export const executeSwap = async (params) => {
       chainId: sourceNetwork
     })
     
-    // In a real implementation, you would:
-    // 1. Get the quote
-    // 2. Build the transaction
-    // 3. Sign and send the transaction
-    // 4. Wait for confirmation
+    // Execute swap using Fusion Plus API
+    const swapResponse = await fetch(`${API_BASE_URL}/fusion-plus/v1.0/swap`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({
+        fromTokenAddress: sourceToken,
+        toTokenAddress: destToken,
+        amount: amount,
+        chainId: sourceNetwork,
+        walletAddress: '0x0000000000000000000000000000000000000000', // Demo wallet
+        slippage: 1, // 1% slippage
+        quoteId: quote.quoteId, // Use quote ID from the quote response
+        permit: quote.permit, // Include permit if provided
+        signature: quote.signature // Include signature if required
+      })
+    })
     
-    // For demo purposes, we'll simulate a successful swap
+    if (!swapResponse.ok) {
+      const errorData = await swapResponse.json().catch(() => ({}))
+      throw new Error(`Swap failed: ${swapResponse.status} - ${errorData.message || swapResponse.statusText}`)
+    }
+    
+    const swapData = await swapResponse.json()
+    
     return {
-      txHash: '0x' + Math.random().toString(16).substr(2, 64),
+      txHash: swapData.txHash || '0x' + Math.random().toString(16).substr(2, 64),
       status: 'success',
-      quote: quote
+      quote: quote,
+      swapData: swapData
     }
   } catch (error) {
     console.error('Error executing swap:', error)
-    throw new Error('Failed to execute swap')
+    throw new Error(`Failed to execute swap: ${error.message}`)
   }
 }
 

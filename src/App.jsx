@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { executeSwap } from './api/1inch.js'
 
 function App() {
   const [networks] = useState([
@@ -38,12 +39,24 @@ function App() {
     setError('')
     setSuccess('')
 
-    // Simulate swap
-    setTimeout(() => {
-      setSuccess(`Swap executed successfully! Transaction hash: 0x${Math.random().toString(16).substr(2, 64)}`)
+    try {
+      // Call the real 1inch API
+      const result = await executeSwap({
+        sourceNetwork,
+        destNetwork,
+        sourceToken,
+        destToken,
+        amount
+      })
+      
+      setSuccess(`Swap executed successfully! Transaction hash: ${result.txHash}`)
       setAmount('')
+    } catch (err) {
+      setError(err.message || 'Failed to execute swap')
+      console.error('Swap error:', err)
+    } finally {
       setLoading(false)
-    }, 2000)
+    }
   }
 
   return (
